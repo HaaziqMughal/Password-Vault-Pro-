@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🔐 Password Vault Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style id="style-theme"></style>
+  <style>
+    /* 3D Background Animation Styles */
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      overflow: hidden;
+    }
+
+    .floating-elements {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .floating-cube {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: float 6s ease-in-out infinite;
+      -webkit-backdrop-filter: blur(10px);
+              backdrop-filter: blur(10px);
+      border-radius: 8px;
+    }
+
+    .floating-cube:nth-child(1) {
+      top: 10%;
+      left: 10%;
+      animation-delay: 0s;
+      animation-duration: 8s;
+    }
+
+    .floating-cube:nth-child(2) {
+      top: 20%;
+      right: 15%;
+      animation-delay: -2s;
+      animation-duration: 10s;
+    }
+
+    .floating-cube:nth-child(3) {
+      bottom: 20%;
+      left: 20%;
+      animation-delay: -4s;
+      animation-duration: 12s;
+    }
+
+    .floating-cube:nth-child(4) {
+      bottom: 30%;
+      right: 10%;
+      animation-delay: -6s;
+      animation-duration: 9s;
+    }
+
+    .floating-sphere {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+      border-radius: 50%;
+      animation: floatRotate 8s ease-in-out infinite;
+      -webkit-backdrop-filter: blur(5px);
+              backdrop-filter: blur(5px);
+    }
+
+    .floating-sphere:nth-child(5) {
+      top: 40%;
+      left: 5%;
+      animation-delay: -1s;
+    }
+
+    .floating-sphere:nth-child(6) {
+      top: 60%;
+      right: 8%;
+      animation-delay: -3s;
+    }
+
+    .floating-triangle {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 35px solid rgba(255, 255, 255, 0.15);
+      animation: triangleFloat 10s ease-in-out infinite;
+    }
+
+    .floating-triangle:nth-child(7) {
+      top: 15%;
+      left: 50%;
+      animation-delay: -2s;
+    }
+
+    .floating-triangle:nth-child(8) {
+      bottom: 25%;
+      left: 60%;
+      animation-delay: -5s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-20px) rotate(180deg);
+      }
+    }
+
+    @keyframes floatRotate {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg) scale(1);
+      }
+      33% {
+        transform: translateY(-15px) rotate(120deg) scale(1.1);
+      }
+      66% {
+        transform: translateY(-10px) rotate(240deg) scale(0.9);
+      }
+    }
+
+    @keyframes triangleFloat {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-25px) rotate(360deg);
+      }
+    }
+
+    /* Particle system */
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      animation: particleMove 15s linear infinite;
+    }
+
+    @keyframes particleMove {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Glass morphism effects */
+    .glass-container {
+      background: rgba(255, 255, 255, 0.1);
+      -webkit-backdrop-filter: blur(20px);
+              backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .glass-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Enhanced welcome screen */
+    #welcomeScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      color: #fff;
+      z-index: 9999;
+      animation: fadeOut 3s ease forwards;
+    }
+
+    #welcomeScreen h1 {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      animation: titleGlow 2s ease-in-out infinite alternate;
+    }
+
+    #developerInfo {
+      font-size: 0.4em;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 15px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes titleGlow {
+      0% {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      100% {
+        text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.8;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
+
+    /* Enhanced button styles */
+    .btn-3d {
+      position: relative;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .btn-3d:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-3d:hover:before {
+      left: 100%;
+    }
+
+    .btn-3d:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-3d:active {
+      transform: translateY(0);
+    }
+
+    /* Enhanced input styles */
+    .input-3d {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      color: white;
+      -webkit-backdrop-filter: blur(10px);
+              backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-3d:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      transform: scale(1.02);
+    }
+
+    .input-3d::-moz-placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .input-3d::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Icon animations */
+    .icon-3d {
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    .icon-3d:hover {
+      transform: rotateY(180deg);
+    }
+
+    /* Loading animation */
+    .loading-dots {
+      display: inline-block;
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .loading-dots div {
+      position: absolute;
+      top: 33px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #fff;
+      animation-timing-function: cubic-bezier(0, 1, 1, 0);
+    }
+
+    .loading-dots div:nth-child(1) {
+      left: 8px;
+      animation: lds-ellipsis1 0.6s infinite;
+    }
+
+    .loading-dots div:nth-child(2) {
+      left: 8px;
+      animation: lds-ellipsis2 0.6s infinite;
+    }
+
+    .loading-dots div:nth-child(3) {
+      left: 32px;
+      animation: lds-ellipsis2 0.6s infinite;
+    }
+
+    .loading-dots div:nth-child(4) {
+      left: 56px;
+      animation: lds-ellipsis3 0.6s infinite;
+    }
+
+    @keyframes lds-ellipsis1 {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes lds-ellipsis3 {
+      0% { transform: scale(1); }
+      100% { transform: scale(0); }
+    }
+
+    @keyframes lds-ellipsis2 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(24px, 0); }
+    }
+
+    /* Theme toggle button */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      -webkit-backdrop-filter: blur(10px);
+              backdrop-filter: blur(10px);
+    }
+
+    .theme-toggle:hover {
+      transform: rotate(180deg);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Original functionality styles */
+    .delete-btn, .toggle-eye, .copy-btn, .generate-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2em;
+      padding: 5px;
+      transition: all 0.3s ease;
+      border-radius: 5px;
+    }
+
+    .delete-btn:hover, .toggle-eye:hover, .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding-right: 2.2em;
+    }
+
+    .input-wrapper .toggle-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2em;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .password-strength {
+      margin-top: 5px;
+      font-size: 0.8em;
+      text-align: left;
+      width: 100%;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .strength-indicator {
+      height: 5px;
+      border-radius: 2.5px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      margin-top: 3px;
+      overflow: hidden;
+    }
+
+    .strength-bar {
+      height: 100%;
+      border-radius: 2.5px;
+      width: 0%;
+      transition: width 0.3s ease-in-out;
+      background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4);
+    }
+
+    .strength-weak .strength-bar { 
+      background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+      width: 25%;
+    }
+    .strength-medium .strength-bar { 
+      background: linear-gradient(90deg, #ffd93d, #ffed4e);
+      width: 50%;
+    }
+    .strength-strong .strength-bar { 
+      background: linear-gradient(90deg, #6bcf7f, #87e190);
+      width: 75%;
+    }
+    .strength-very-strong .strength-bar { 
+      background: linear-gradient(90deg, #4ecdc4, #6ee7d4);
+      width: 100%;
+    }
+
+    #passwordGeneratorOptions {
+      margin-top: 10px;
+      text-align: left;
+      padding: 15px;
+      border-radius: 15px;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+      display: none;
+    }
+
+    #passwordGeneratorOptions label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9em;
+    }
+
+    #passwordGeneratorOptions input[type="checkbox"],
+    #passwordGeneratorOptions input[type="number"] {
+      width: auto;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    #passwordGeneratorOptions .length-input {
+      width: 60px;
+      display: inline-block;
+      margin-left: 8px;
+    }
+
+    #passwordGeneratorOutput {
+      margin-top: 10px;
+      font-size: 0.9em;
+      word-break: break-all;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #passwordGeneratorOutput span {
+      flex-grow: 1;
+      text-align: left;
+    }
+
+    #passwordGeneratorOutput .copy-btn {
+      margin-left: 10px;
+    }
+
+    #searchFilterContainer {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    #searchFilterContainer input {
+      margin: 0;
+      border-radius: 10px 0 0 10px;
+      border-right: none;
+    }
+
+    #searchFilterContainer button {
+      margin: 0;
+      border-radius: 0 10px 10px 0;
+      width: auto;
+      padding: 10px 15px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .floating-cube, .floating-sphere, .floating-triangle {
+        display: none;
+      }
+      
+      #welcomeScreen h1 {
+        font-size: 1em;
+      }
+      
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="floating-elements">
+      <div class="floating-cube"></div>
+      <div class="floating-cube"></div>
+      <div class="floating-cube"></div>
+      <div class="floating-cube"></div>
+      <div class="floating-sphere"></div>
+      <div class="floating-sphere"></div>
+      <div class="floating-triangle"></div>
+      <div class="floating-triangle"></div>
+    </div>
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <!-- Welcome Screen -->
+  <div id="welcomeScreen">
+    <h1>🔐 Welcome to Password Vault Pro</h1>
+    <div class="loading-dots">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div id="developerInfo">Developed by Haaziq Mughal</div>
+  </div>
+
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span class="icon-3d">🌗</span>
+  </button>
+
+  <!-- Main Header -->
+  <h2 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin-bottom: 20px;">
+    🔐 Password Vault Pro
+  </h2>
+
+  <!-- Login Screen -->
+  <div id="login" class="container glass-container hidden">
+    <h3>🔓 Unlock Vault</h3>
+    <div class="input-wrapper">
+      <input type="password" id="loginKey" placeholder="Enter Master Key" autocomplete="current-password" class="input-3d" />
+      <span class="toggle-eye" onclick="toggleVisibility('loginKey', this)">👁️</span>
+    </div>
+    <button onclick="login()" class="btn-3d">Unlock Vault</button>
+    <button onclick="showHint()" class="btn-3d">❓ Forgot Master Key?</button>
+    <p id="hintText" style="margin-top: 10px; font-style: italic; color: rgba(255,255,255,0.8);"></p>
+  </div>
+
+  <!-- Setup Screen -->
+  <div id="setup" class="container glass-container hidden">
+    <h3>🔑 Set Master Key</h3>
+    <input type="password" id="newKey" placeholder="New Master Key (min. 6 chars)" autocomplete="new-password" class="input-3d" onkeyup="checkPasswordStrength('newKey', 'newKeyStrength')"/>
+    <div class="password-strength" id="newKeyStrength">
+      <span class="strength-text" style="color: rgba(255,255,255,0.9);"></span>
+      <div class="strength-indicator"><div class="strength-bar"></div></div>
+    </div>
+    <input type="password" id="confirmKey" placeholder="Confirm Master Key" autocomplete="new-password" class="input-3d" />
+    <input type="text" id="hint" placeholder="Set a Password Hint (required)" class="input-3d" />
+    <button onclick="setupMasterKey()" class="btn-3d">Save Master Key</button>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="container glass-container hidden">
+    <h3>➕ Add a New Password</h3>
+    <input type="email" id="gmail" placeholder="Email Address (optional)" autocomplete="email" class="input-3d" />
+    <input type="text" id="site" placeholder="Website (e.g., Gmail)" class="input-3d" />
+    <div class="input-wrapper">
+        <input type="password" id="password" placeholder="Password" autocomplete="new-password" class="input-3d" onkeyup="checkPasswordStrength('password', 'passwordStrength')"/>
+        <span class="toggle-eye" onclick="toggleVisibility('password', this)">👁️</span>
+    </div>
+    <div class="password-strength" id="passwordStrength">
+        <span class="strength-text" style="color: rgba(255,255,255,0.9);"></span>
+        <div class="strength-indicator"><div class="strength-bar"></div></div>
+    </div>
+
+    <button onclick="togglePasswordGeneratorOptions()" class="btn-3d">⚙️ Generate Password</button>
+    <div id="passwordGeneratorOptions" class="glass-container">
+        <label style="color: rgba(255,255,255,0.9);"><input type="checkbox" id="genLetters" checked> Letters (a-z, A-Z)</label>
+        <label style="color: rgba(255,255,255,0.9);"><input type="checkbox" id="genNumbers"> Numbers (0-9)</label>
+        <label style="color: rgba(255,255,255,0.9);"><input type="checkbox" id="genSymbols"> Symbols (!@#$%^&*)</label>
+        <label style="color: rgba(255,255,255,0.9);">Length: <input type="number" id="genLength" min="6" max="64" value="12" class="length-input input-3d"></label>
+        <button onclick="generatePassword()" class="btn-3d">Generate</button>
+        <div id="passwordGeneratorOutput" class="glass-container" style="display: none;">
+            <span id="generatedPasswordText" style="color: rgba(255,255,255,0.9);"></span>
+            <button class="copy-btn" onclick="copyToClipboard('generatedPasswordText', 'password')">📋</button>
+        </div>
+    </div>
+
+    <button onclick="savePassword()" class="btn-3d">💾 Save Password</button>
+    <hr style="border: 1px solid rgba(255,255,255,0.3); margin: 20px 0;">
+    <button onclick="loadPasswords()" class="btn-3d">📂 Show Stored Passwords</button>
+    <button onclick="showEditMasterKeyAndHint()" class="btn-3d">🔑 Edit Master Key & Hint</button>
+    <button onclick="exportPasswords()" class="btn-3d">📤 Export Passwords</button>
+    <button onclick="document.getElementById('importFile').click()" class="btn-3d">📥 Import Passwords</button>
+    <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importPasswords(event)" />
+    <button onclick="logout()" class="btn-3d">🔒 Logout</button>
+
+    <div id="searchFilterContainer">
+        <input type="text" id="searchFilter" placeholder="Search passwords..." onkeyup="filterPasswords()" class="input-3d" />
+        <button onclick="clearSearchFilter()" class="btn-3d">Clear</button>
+    </div>
+
+    <div id="output" style="margin-top: 20px;"></div>
+  </div>
+
+  <!-- Edit Master Key Screen -->
+  <div id="editMasterKeyAndHint" class="container glass-container hidden">
+    <h3>🔧 Edit Master Key & Hint</h3>
+    <p style="color: rgba(255,255,255,0.8);">Enter your **current Master Key** to make changes.</p>
+    <div class="input-wrapper">
+        <input type="password" id="currentMasterKeyForEdit" placeholder="Current Master Key" autocomplete="current-password" class="input-3d" />
+        <span class="toggle-eye" onclick="toggleVisibility('currentMasterKeyForEdit', this)">👁️</span>
+    </div>
+    <hr style="margin: 15px 0; border-color: rgba(255,255,255,0.3);">
+    <p style="color: rgba(255,255,255,0.8);">Set your **new Master Key** (optional - leave blank to keep current).</p>
+    <div class="input-wrapper">
+        <input type="password" id="editNewMasterKey" placeholder="New Master Key (min. 6 chars)" autocomplete="new-password" class="input-3d" onkeyup="checkPasswordStrength('editNewMasterKey', 'editNewMasterKeyStrength')"/>
+        <span class="toggle-eye" onclick="toggleVisibility('editNewMasterKey', this)">👁️</span>
+    </div>
+    <div class="password-strength" id="editNewMasterKeyStrength">
+        <span class="strength-text" style="color: rgba(255,255,255,0.9);"></span>
+        <div class="strength-indicator"><div class="strength-bar"></div></div>
+    </div>
+    <div class="input-wrapper">
+        <input type="password" id="editConfirmMasterKey" placeholder="Confirm New Master Key" autocomplete="new-password" class="input-3d" />
+        <span class="toggle-eye" onclick="toggleVisibility('editConfirmMasterKey', this)">👁️</span>
+    </div>
+    <hr style="margin: 15px 0; border-color: rgba(255,255,255,0.3);">
+    <p style="color: rgba(255,255,255,0.8);">Set your **new Hint** (optional - leave blank to keep current).</p>
+    <input type="text" id="editMasterKeyHint" placeholder="New Password Hint" class="input-3d" />
+    <button onclick="updateMasterKeyAndHint()" class="btn-3d">Update Key & Hint</button>
+    <button onclick="cancelEditMasterKeyAndHint()" class="btn-3d">Cancel</button>
+  </div>
+
+  <script>
+    // Initialize particle system
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Initialize particles when page loads
+    document.addEventListener('DOMContentLoaded', createParticles);
+
+    // Global variable to store the decrypted master key during session
+    let masterKey = '';
+    let idleTimer; // For idle logout functionality
+    const IDLE_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+    // Theme definitions
+    const themes = {
+      dark: `
+        .animated-bg {
+          background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+        }
+        .glass-container {
+          background: rgba(0, 0, 0, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: #fff;
+        }
+        .input-3d {
+          background: rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: #fff;
+        }
+        .btn-3d {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .entry {
+          background: rgba(0, 0, 0, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+          padding: 15px;
+          margin: 10px 0;
+          backdrop-filter: blur(10px);
+        }
+        #passwordGeneratorOptions, #passwordGeneratorOutput {
+          background: rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+      `,
+      light: `
+        .animated-bg {
+          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .glass-container {
+          background: rgba(255, 255, 255, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          color: #333;
+        }
+        .input-3d {
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          color: #333;
+        }
+        .input-3d::placeholder {
+          color: rgba(0, 0, 0, 0.6);
+        }
+        .btn-3d {
+          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .entry {
+          background: rgba(255, 255, 255, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          border-radius: 10px;
+          padding: 15px;
+          margin: 10px 0;
+          backdrop-filter: blur(10px);
+          color: #333;
+        }
+        #passwordGeneratorOptions, #passwordGeneratorOutput {
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .strength-text {
+          color: #333 !important;
+        }
+      `
+    };
+
+    /**
+     * Toggles between dark and light themes and saves the preference.
+     */
+    function toggleTheme() {
+      const current = localStorage.getItem('theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', next);
+      applyTheme();
+    }
+
+    /**
+     * Applies the selected theme by injecting CSS into the style-theme element.
+     */
+    function applyTheme() {
+      const theme = localStorage.getItem('theme') || 'dark';
+      document.getElementById('style-theme').innerHTML = `
+        * {
+          box-sizing: border-box;
+          padding: 0;
+          margin: 0;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          min-height: 100vh;
+          overflow-x: hidden;
+        }
+        input, button {
+          padding: 12px;
+          margin: 8px 0;
+          width: 100%;
+          max-width: 320px;
+          border-radius: 10px;
+          font-size: 14px;
+        }
+        .container {
+          padding: 25px;
+          border-radius: 20px;
+          max-width: 450px;
+          width: 100%;
+          margin: 15px auto;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+        .entry {
+          padding: 15px;
+          margin: 10px 0;
+          border-radius: 15px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          transition: all 0.3s ease;
+        }
+        .entry:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        .hidden { display: none; }
+        ${themes[theme]}
+      `;
+    }
+
+    /**
+     * Resets the idle timer. If the app is active, it will be called on user activity.
+     */
+    function resetIdleTimer() {
+        if (idleTimer) {
+            clearTimeout(idleTimer);
+        }
+        if (masterKey) { // Only start timer if logged in
+            idleTimer = setTimeout(logout, IDLE_TIMEOUT);
+        }
+    }
+
+    // Event listeners for user activity to reset the idle timer
+    ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'].forEach(eventType => {
+        document.addEventListener(eventType, resetIdleTimer, true);
+    });
+
+    /**
+     * Initializes the application on page load.
+     * Checks for an existing master key to determine whether to show login or setup.
+     */
+    window.onload = function () {
+      applyTheme();
+      // Fade out welcome screen and then show appropriate view
+      setTimeout(() => {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        if (localStorage.getItem('masterKeyEncrypted')) {
+          document.getElementById('login').classList.remove('hidden');
+        } else {
+          document.getElementById('setup').classList.remove('hidden');
+        }
+      }, 3000);
+    };
+
+    /**
+     * Toggles the visibility of password input fields.
+     * @param {string} id - The ID of the input field.
+     * @param {HTMLElement} icon - The eye icon element that triggered the toggle.
+     */
+    function toggleVisibility(id, icon) {
+      const input = document.getElementById(id);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        icon.textContent = '👁️';
+      }
+    }
+
+    /**
+     * Calculates and displays password strength.
+     * @param {string} passwordInputId - ID of the password input field.
+     * @param {string} strengthDisplayId - ID of the element to display strength.
+     */
+    function checkPasswordStrength(passwordInputId, strengthDisplayId) {
+        const password = document.getElementById(passwordInputId).value;
+        const strengthDiv = document.getElementById(strengthDisplayId);
+        const strengthText = strengthDiv.querySelector('.strength-text');
+        const strengthBar = strengthDiv.querySelector('.strength-bar');
+
+        let score = 0;
+        if (password.length > 5) score += 1;
+        if (password.length > 8) score += 1;
+        if (password.length > 12) score += 1;
+        if (/[A-Z]/.test(password)) score += 1;
+        if (/[a-z]/.test(password)) score += 1;
+        if (/[0-9]/.test(password)) score += 1;
+        if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) score += 1;
+
+        let strength = 'Weak';
+        strengthDiv.className = 'password-strength strength-weak';
+
+        if (score >= 4) {
+            strength = 'Medium';
+            strengthDiv.className = 'password-strength strength-medium';
+        }
+        if (score >= 6) {
+            strength = 'Strong';
+            strengthDiv.className = 'password-strength strength-strong';
+        }
+        if (score >= 7) {
+            strength = 'Very Strong';
+            strengthDiv.className = 'password-strength strength-very-strong';
+        }
+
+        strengthText.textContent = `Strength: ${strength}`;
+    }
+
+    /**
+     * Toggles the visibility of the password generator options.
+     */
+    function togglePasswordGeneratorOptions() {
+        const optionsDiv = document.getElementById('passwordGeneratorOptions');
+        optionsDiv.style.display = optionsDiv.style.display === 'block' ? 'none' : 'block';
+        // Clear previous output when toggling
+        document.getElementById('generatedPasswordText').textContent = '';
+        document.getElementById('passwordGeneratorOutput').style.display = 'none';
+    }
+
+    /**
+     * Generates a random password based on selected criteria.
+     */
+    function generatePassword() {
+        const length = parseInt(document.getElementById('genLength').value);
+        const includeLetters = document.getElementById('genLetters').checked;
+        const includeNumbers = document.getElementById('genNumbers').checked;
+        const includeSymbols = document.getElementById('genSymbols').checked;
+
+        let charset = "";
+        if (includeLetters) charset += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (includeNumbers) charset += "0123456789";
+        if (includeSymbols) charset += "!@#$%^&*()_+-=[]{};':\"\\|,.<>/?";
+
+        if (charset.length === 0) {
+            alert("Please select at least one character type for password generation.");
+            return;
+        }
+
+        let generatedPassword = "";
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            generatedPassword += charset[randomIndex];
+        }
+
+        const generatedPasswordText = document.getElementById('generatedPasswordText');
+        generatedPasswordText.textContent = generatedPassword;
+        document.getElementById('passwordGeneratorOutput').style.display = 'flex';
+        // Automatically put the generated password into the password input field
+        document.getElementById('password').value = generatedPassword;
+        checkPasswordStrength('password', 'passwordStrength'); // Update strength for generated password
+    }
+
+    /**
+     * Copies text from a specified element to the clipboard and optionally to an input field.
+     * @param {string} sourceId - The ID of the element containing the text to copy.
+     * @param {string} [targetInputId] - Optional: The ID of an input field to paste the text into.
+     */
+    function copyToClipboard(sourceId, targetInputId) {
+        const textToCopy = document.getElementById(sourceId).textContent;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert('Copied to clipboard!');
+            if (targetInputId) {
+                document.getElementById(targetInputId).value = textToCopy;
+                // If it's a password input, keep it as password type
+                if (document.getElementById(targetInputId).type === 'text') {
+                    document.getElementById(targetInputId).type = 'password';
+                    // Revert the eye icon too
+                    const icon = document.getElementById(targetInputId).nextElementSibling;
+                    if (icon && icon.classList.contains('toggle-eye')) {
+                        icon.textContent = '👁️';
+                    }
+                }
+            }
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            alert('Failed to copy password. Please copy manually.');
+        });
+    }
+
+    /**
+     * Sets up the initial master key and hint.
+     * Encrypts the master key with itself for storage.
+     */
+    function setupMasterKey() {
+      const key1 = document.getElementById('newKey').value;
+      const key2 = document.getElementById('confirmKey').value;
+      const hint = document.getElementById('hint').value.trim();
+
+      if (!hint) {
+        return alert('Please enter a password hint.');
+      }
+      // Security: Enforce minimum master key length
+      if (key1.length < 6) {
+        return alert('Master Key must be at least 6 characters long.');
+      }
+      if (key1 !== key2) {
+        return alert('Master Keys must match.');
+      }
+
+      // Encrypt the master key with itself for storage (basic security measure)
+      const encrypted = CryptoJS.AES.encrypt(key1, key1).toString();
+      localStorage.setItem('masterKeyEncrypted', encrypted);
+      localStorage.setItem('masterKeyHint', hint);
+      alert('✅ Master Key and Hint saved successfully.');
+      location.reload(); // Reload to transition to login screen
+    }
+
+    /**
+     * Attempts to log in using the entered master key.
+     * Decrypts the stored master key to verify.
+     */
+    function login() {
+      const inputKey = document.getElementById('loginKey').value;
+      const encrypted = localStorage.getItem('masterKeyEncrypted');
+
+      if (!inputKey) {
+        return alert('Please enter your Master Key to unlock the vault.');
+      }
+
+      if (!encrypted) {
+          alert('No master key found. Please set up a new master key.');
+          document.getElementById('login').classList.add('hidden');
+          document.getElementById('setup').classList.remove('hidden');
+          return;
+      }
+
+      try {
+        const decrypted = CryptoJS.AES.decrypt(encrypted, inputKey).toString(CryptoJS.enc.Utf8);
+        if (decrypted === inputKey) {
+          masterKey = inputKey; // Store the master key in memory for the session
+          document.getElementById('login').classList.add('hidden');
+          document.getElementById('app').classList.remove('hidden');
+          loadPasswords(); // Load passwords immediately after successful login
+          resetIdleTimer(); // Start idle timer
+        } else {
+          alert('❌ Incorrect Master Key. Please try again.');
+        }
+      } catch (e) {
+        // Catch decryption errors (e.g., incorrect key, corrupted data)
+        console.error("Decryption error during login:", e);
+        alert('❌ Incorrect Master Key or corrupted data. Please check your key.');
+      }
+    }
+
+    /**
+     * Displays the stored master key hint.
+     */
+    function showHint() {
+      const hint = localStorage.getItem('masterKeyHint');
+      document.getElementById('hintText').innerText = `💡 Hint: ${hint || 'No hint was set.'}`;
+    }
+
+    /**
+     * Logs out the user by reloading the page, clearing the in-memory masterKey.
+     */
+    function logout() {
+      masterKey = ''; // Clear the master key from memory
+      if (idleTimer) {
+        clearTimeout(idleTimer); // Clear any running idle timer
+      }
+      alert('🔒 You have been logged out due to inactivity or manually.');
+      location.reload();
+    }
+
+    /**
+     * Saves a new password entry.
+     * Encrypts the password using the current masterKey.
+     */
+    function savePassword() {
+      const site = document.getElementById('site').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const gmail = document.getElementById('gmail').value.trim(); // Optional email field
+
+      if (!site || !password) {
+        return alert('Please fill in both Website and Password fields.');
+      }
+      if (!masterKey) {
+          return alert('Vault not unlocked. Please log in first.');
+      }
+
+      // Encrypt the password using the masterKey
+      const encrypted = CryptoJS.AES.encrypt(password, masterKey).toString();
+      localStorage.setItem('secure-' + site.toLowerCase(), JSON.stringify({ encrypted, gmail }));
+      alert('✅ Password saved successfully!');
+      // Clear input fields after saving
+      document.getElementById('site').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('gmail').value = '';
+      checkPasswordStrength('password', 'passwordStrength'); // Reset strength indicator
+      loadPasswords(); // Refresh the displayed list of passwords
+      resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Loads and displays all stored password entries.
+     * Attempts to decrypt each password using the current masterKey.
+     */
+    function loadPasswords() {
+      const output = document.getElementById('output');
+      output.innerHTML = '<h3 style="color: rgba(255,255,255,0.9); margin-bottom: 15px;">🔎 Stored Passwords</h3>';
+      let hasPasswords = false;
+
+      // Get search filter value
+      const filterText = document.getElementById('searchFilter').value.toLowerCase();
+
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('secure-')) {
+          const site = key.replace('secure-', '');
+          const storedData = JSON.parse(localStorage.getItem(key));
+          const { encrypted, gmail } = storedData;
+
+          // Filter logic
+          if (filterText && !site.toLowerCase().includes(filterText) && (!gmail || !gmail.toLowerCase().includes(filterText))) {
+              return; // Skip if it doesn't match the filter
+          }
+
+          hasPasswords = true;
+          let decryptedPassword = '';
+          let decryptionError = false;
+
+          try {
+            if (masterKey) { // Only attempt decryption if masterKey is available
+                decryptedPassword = CryptoJS.AES.decrypt(encrypted, masterKey).toString(CryptoJS.enc.Utf8);
+            } else {
+                decryptionError = true;
+            }
+          } catch (e) {
+            decryptionError = true;
+            console.error(`Error decrypting password for ${site}:`, e);
+          }
+
+          output.innerHTML += `
+            <div class="entry">
+              <strong style="font-size: 16px; margin-bottom: 5px; display: block;">${site}</strong>
+              ${gmail ? `<small style="color: rgba(255,255,255,0.7); margin-bottom: 10px; display: block;">📧 ${gmail}</small>` : ''}
+              <div style="display:flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="flex-grow: 1;">
+                  <span id="pass-${site}" style="user-select: none; font-family: monospace;">
+                    ${decryptionError ? '<span style="color: #ff6b6b;">Encryption error. Update or delete.</span>' : '••••••••'}
+                  </span>
+                </div>
+                <div class="action-buttons">
+                  ${!decryptionError ? `<button class="toggle-eye" onclick="toggleStoredPassword('${site}', this)" title="Show/Hide Password">👁️</button>` : ''}
+                  ${!decryptionError ? `<button class="copy-btn" onclick="copyDecryptedPassword('${site}')" title="Copy Password">📋</button>` : ''}
+                  <button class="delete-btn" onclick="deletePassword('${key}')" title="Delete Password" style="color: #ff6b6b;">🗑️</button>
+                  <button class="delete-btn" style="color: #ffd93d;" onclick="editPassword('${site}')" title="Edit Password">✏️</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      if (!hasPasswords && !filterText) {
+          output.innerHTML += '<p style="color: rgba(255,255,255,0.7); padding: 20px;">No passwords stored yet. Add one above!</p>';
+      } else if (!hasPasswords && filterText) {
+          output.innerHTML += `<p style="color: rgba(255,255,255,0.7); padding: 20px;">No passwords found matching "${filterText}".</p>`;
+      }
+      resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Filters the displayed passwords based on the search input.
+     */
+    function filterPasswords() {
+        loadPasswords(); // Re-load passwords with the current filter
+        resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Clears the search filter and reloads all passwords.
+     */
+    function clearSearchFilter() {
+        document.getElementById('searchFilter').value = '';
+        loadPasswords();
+        resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Copies a decrypted stored password to the clipboard.
+     * @param {string} site - The site name of the password to copy.
+     */
+    function copyDecryptedPassword(site) {
+        const key = 'secure-' + site.toLowerCase();
+        const storedData = JSON.parse(localStorage.getItem(key));
+        const { encrypted } = storedData;
+
+        if (!masterKey) {
+            return alert('Vault not unlocked. Please log in first.');
+        }
+
+        try {
+            const decrypted = CryptoJS.AES.decrypt(encrypted, masterKey).toString(CryptoJS.enc.Utf8);
+            if (decrypted) {
+                navigator.clipboard.writeText(decrypted).then(() => {
+                    alert('Password copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy password:', err);
+                    alert('Failed to copy password. Please copy manually.');
+                });
+            } else {
+                alert('Decryption failed for this password. Cannot copy.');
+            }
+        } catch (e) {
+            console.error(`Error copying decrypted password for ${site}:`, e);
+            alert('Error decrypting password. Master key might have changed or data is corrupted. Cannot copy.');
+        }
+        resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Toggles the visibility of a stored password in the display list.
+     * @param {string} site - The site name associated with the password.
+     * @param {HTMLElement} icon - The eye icon element that triggered the toggle.
+     */
+    function toggleStoredPassword(site, icon) {
+      const span = document.getElementById('pass-' + site);
+      const key = 'secure-' + site.toLowerCase();
+      const storedData = JSON.parse(localStorage.getItem(key));
+      const { encrypted } = storedData;
+
+      if (!masterKey) {
+          return alert('Vault not unlocked. Please log in first.');
+      }
+
+      try {
+        const decrypted = CryptoJS.AES.decrypt(encrypted, masterKey).toString(CryptoJS.enc.Utf8);
+        if (span.innerText === '••••••••') {
+          span.innerText = decrypted;
+          icon.textContent = '🙈';
+        } else {
+          span.innerText = '••••••••';
+          icon.textContent = '👁️';
+        }
+      } catch (e) {
+        console.error(`Error toggling password for ${site}:`, e);
+        alert('Error decrypting password. Master key might have changed or data is corrupted. Please edit this entry.');
+      }
+      resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Deletes a password entry from localStorage.
+     * @param {string} key - The localStorage key of the password to delete.
+     */
+    function deletePassword(key) {
+      if (confirm("Are you sure you want to delete this password entry?")) {
+        localStorage.removeItem(key);
+        alert('✅ Password deleted.');
+        loadPasswords(); // Refresh the list
+      }
+      resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Allows editing of an existing password entry.
+     * Prompts the user for new site, gmail, and password.
+     */
+    function editPassword(site) {
+      const key = 'secure-' + site.toLowerCase();
+      const stored = JSON.parse(localStorage.getItem(key));
+
+      if (!stored) {
+          return alert('Password entry not found.');
+      }
+      if (!masterKey) {
+          return alert('Vault not unlocked. Please log in first.');
+      }
+
+      let decrypted = '';
+      try {
+        decrypted = CryptoJS.AES.decrypt(stored.encrypted, masterKey).toString(CryptoJS.enc.Utf8);
+      } catch (e) {
+        console.error(`Error decrypting password for editing ${site}:`, e);
+        // If decryption fails, we still allow editing, but prompt for new password
+        alert('Could not decrypt current password. Please enter a new password.');
+      }
+
+      const newSite = prompt("Edit Website Name:", site);
+      if (newSite === null) return; // User cancelled
+
+      const newGmail = prompt("Edit Email (optional):", stored.gmail || '');
+      if (newGmail === null) return; // User cancelled
+
+      // Prompt for new password, pre-filling with decrypted if successful
+      const newPassword = prompt("Edit Password:", decrypted);
+      if (newPassword === null) return; // User cancelled
+      if (!newPassword.trim()) { // Ensure new password is not empty
+          return alert('Password cannot be empty. Edit cancelled.');
+      }
+
+      const newEncrypted = CryptoJS.AES.encrypt(newPassword.trim(), masterKey).toString();
+
+      // Remove old entry and save new one
+      localStorage.removeItem(key);
+      localStorage.setItem('secure-' + newSite.toLowerCase().trim(), JSON.stringify({ encrypted: newEncrypted, gmail: newGmail.trim() }));
+      alert("✅ Password entry updated successfully.");
+      loadPasswords(); // Refresh the displayed list
+      resetIdleTimer(); // Reset timer on activity
+    }
+
+    // --- Functions for Master Key & Hint Edit ---
+
+    /**
+     * Shows the master key and hint edit screen.
+     */
+    function showEditMasterKeyAndHint() {
+      document.getElementById('app').classList.add('hidden');
+      document.getElementById('editMasterKeyAndHint').classList.remove('hidden');
+      // Clear previous inputs and pre-fill hint
+      document.getElementById('currentMasterKeyForEdit').value = '';
+      document.getElementById('editNewMasterKey').value = '';
+      document.getElementById('editConfirmMasterKey').value = '';
+      document.getElementById('editMasterKeyHint').value = localStorage.getItem('masterKeyHint') || '';
+      checkPasswordStrength('editNewMasterKey', 'editNewMasterKeyStrength'); // Reset strength indicator
+      resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Cancels the master key and hint edit and returns to the main app.
+     */
+    function cancelEditMasterKeyAndHint() {
+      document.getElementById('editMasterKeyAndHint').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Updates the master key and/or hint after current master key verification.
+     * Re-encrypts all stored passwords if the master key is changed.
+     */
+    function updateMasterKeyAndHint() {
+      const currentKeyInput = document.getElementById('currentMasterKeyForEdit').value;
+      const newKeyInput = document.getElementById('editNewMasterKey').value;
+      const confirmNewKeyInput = document.getElementById('editConfirmMasterKey').value;
+      const newHintInput = document.getElementById('editMasterKeyHint').value.trim();
+
+      if (!currentKeyInput) {
+          return alert('Please enter your current Master Key to confirm changes.');
+      }
+      if (!masterKey) { // This scenario shouldn't happen if properly logged in
+          return alert('Vault not unlocked. Please log in first.');
+      }
+
+      // Verify current master key by attempting to decrypt the stored master key itself
+      const encryptedMasterKey = localStorage.getItem('masterKeyEncrypted');
+      let decryptedCurrentMasterKeyAttempt;
+      try {
+        decryptedCurrentMasterKeyAttempt = CryptoJS.AES.decrypt(encryptedMasterKey, currentKeyInput).toString(CryptoJS.enc.Utf8);
+      } catch (e) {
+        console.error("Error verifying current master key:", e);
+        return alert('❌ Incorrect current Master Key.');
+      }
+
+      if (decryptedCurrentMasterKeyAttempt !== currentKeyInput) {
+        return alert('❌ Incorrect current Master Key.');
+      }
+
+      let newMasterKeyToUse = masterKey; // Default to current masterKey if not changed
+      let masterKeyChanged = false;
+
+      // Validate and set new master key if provided
+      if (newKeyInput) {
+        if (newKeyInput.length < 6) {
+          return alert('New Master Key must be at least 6 characters long.');
+        }
+        if (newKeyInput !== confirmNewKeyInput) {
+          return alert('New Master Keys must match.');
+        }
+        newMasterKeyToUse = newKeyInput;
+        masterKeyChanged = true;
+      } else if (confirmNewKeyInput) {
+        // If only confirm field is filled, alert user
+        return alert('Please enter the new Master Key in both fields, or leave both blank to keep current.');
+      }
+
+      // --- Re-encrypt all stored passwords with the new (or current) master key ---
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('secure-')) {
+          const { encrypted, gmail } = JSON.parse(localStorage.getItem(key));
+          let decryptedPassword;
+          try {
+            // Attempt to decrypt with the *old* masterKey (global `masterKey` variable)
+            decryptedPassword = CryptoJS.AES.decrypt(encrypted, masterKey).toString(CryptoJS.enc.Utf8);
+            if (decryptedPassword) { // Only re-encrypt if decryption was successful
+              const reEncrypted = CryptoJS.AES.encrypt(decryptedPassword, newMasterKeyToUse).toString();
+              localStorage.setItem(key, JSON.stringify({ encrypted: reEncrypted, gmail }));
+            }
+          } catch (e) {
+            console.warn(`Could not re-encrypt password for ${key}. It might be corrupted or was not decrypted correctly with the previous master key.`);
+          }
+        }
+      });
+
+      // Update the stored master key (encrypted with itself)
+      localStorage.setItem('masterKeyEncrypted', CryptoJS.AES.encrypt(newMasterKeyToUse, newMasterKeyToUse).toString());
+      // Update the hint (if new hint is provided, otherwise keep old)
+      localStorage.setItem('masterKeyHint', newHintInput || localStorage.getItem('masterKeyHint'));
+
+      masterKey = newMasterKeyToUse; // Update the in-memory masterKey for the current session
+
+      alert('✅ Master Key and Hint updated successfully!');
+      cancelEditMasterKeyAndHint(); // Go back to the main app screen
+      loadPasswords(); // Reload passwords to reflect potential re-encryption
+      resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Exports all stored password entries to a JSON file.
+     * Passwords remain encrypted in the export.
+     */
+    function exportPasswords() {
+        if (!masterKey) {
+            return alert('Vault not unlocked. Please log in first.');
+        }
+
+        const exportedData = {};
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('secure-')) {
+                exportedData[key] = JSON.parse(localStorage.getItem(key));
+            }
+        });
+
+        // Also include encrypted master key and hint for full backup
+        exportedData['masterKeyEncrypted'] = localStorage.getItem('masterKeyEncrypted');
+        exportedData['masterKeyHint'] = localStorage.getItem('masterKeyHint');
+
+        const dataStr = JSON.stringify(exportedData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'password_vault_backup.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert('✅ Passwords exported successfully!');
+        resetIdleTimer(); // Reset timer on activity
+    }
+
+    /**
+     * Imports password entries from a JSON file.
+     * Prompts for master key to decrypt and re-encrypt if necessary.
+     */
+    function importPasswords(event) {
+        if (!masterKey) {
+            return alert('Vault not unlocked. Please log in first.');
+        }
+
+        const file = event.target.files[0];
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+
+                // Verify the master key from the imported data (if present)
+                const importedMasterKeyEncrypted = importedData['masterKeyEncrypted'];
+                const importedMasterKeyHint = importedData['masterKeyHint'];
+                let tempImportMasterKey = '';
+
+                if (importedMasterKeyEncrypted) {
+                    const enteredMasterKeyForImport = prompt("Enter the Master Key from the *imported* vault to decrypt its contents:", "");
+                    if (!enteredMasterKeyForImport) {
+                        return alert("Import cancelled. Master Key for imported vault is required.");
+                    }
+                    try {
+                        tempImportMasterKey = CryptoJS.AES.decrypt(importedMasterKeyEncrypted, enteredMasterKeyForImport).toString(CryptoJS.enc.Utf8);
+                        if (tempImportMasterKey !== enteredMasterKeyForImport) {
+                            return alert("❌ Incorrect Master Key for the imported vault. Import cancelled.");
+                        }
+                    } catch (err) {
+                        console.error("Error decrypting imported master key:", err);
+                        return alert("❌ Failed to decrypt imported master key. It might be incorrect or corrupted. Import cancelled.");
+                    }
+                } else {
+                    // If no master key in import, assume old format or simple data, proceed carefully
+                    const confirmProceed = confirm("The imported file does not contain a master key. Proceeding may lead to unrecoverable data if passwords were encrypted with a different key. Do you want to continue?");
+                    if (!confirmProceed) return;
+                }
+
+                let importedCount = 0;
+                let reEncryptedCount = 0;
+
+                for (const key in importedData) {
+                    if (key.startsWith('secure-')) {
+                        const { encrypted, gmail } = importedData[key];
+                        let decryptedPassword = '';
+
+                        // Attempt to decrypt with the imported master key
+                        try {
+                            if (tempImportMasterKey) {
+                                decryptedPassword = CryptoJS.AES.decrypt(encrypted, tempImportMasterKey).toString(CryptoJS.enc.Utf8);
+                            } else {
+                                decryptedPassword = CryptoJS.AES.decrypt(encrypted, masterKey).toString(CryptoJS.enc.Utf8);
+                            }
+                        } catch (e) {
+                            console.warn(`Could not decrypt imported password for ${key}. It will be stored as encrypted:`, e);
+                            localStorage.setItem(key, JSON.stringify({ encrypted, gmail }));
+                            importedCount++;
+                            continue;
+                        }
+
+                        // Re-encrypt with the *current* active masterKey if decryption was successful
+                        if (decryptedPassword) {
+                            const reEncrypted = CryptoJS.AES.encrypt(decryptedPassword, masterKey).toString();
+                            localStorage.setItem(key, JSON.stringify({ encrypted: reEncrypted, gmail }));
+                            reEncryptedCount++;
+                        } else {
+                            localStorage.setItem(key, JSON.stringify({ encrypted, gmail }));
+                        }
+                        importedCount++;
+                    }
+                }
+
+                // If master key and hint were in the imported data, ask if user wants to update them
+                if (importedMasterKeyEncrypted && importedMasterKeyHint) {
+                    const updateMasterKey = confirm("The imported file contains a master key and hint. Do you want to update your current master key and hint with these (this will overwrite your current ones)? If not, your existing master key will be used for imported passwords.");
+                    if (updateMasterKey) {
+                        // Re-encrypt the imported master key with itself for storage
+                        localStorage.setItem('masterKeyEncrypted', CryptoJS.AES.encrypt(tempImportMasterKey, tempImportMasterKey).toString());
+                        localStorage.setItem('masterKeyHint', importedMasterKeyHint);
+                        masterKey = tempImportMasterKey; // Update current session master key
+                        alert("Your master key and hint have been updated from the imported file.");
+                    }
+                }
+
+                alert(`✅ Successfully imported ${importedCount} entries. ${reEncryptedCount} passwords were re-encrypted with your current master key.`);
+                loadPasswords(); // Refresh the displayed list
+            } catch (error) {
+                console.error("Error importing passwords:", error);
+                alert("❌ Failed to import file. Please ensure it is a valid JSON backup file.");
+            }
+        };
+        reader.readAsText(file);
+        resetIdleTimer(); // Reset timer on activity
+    }
+
+  </script>
+</body>
+</html>
