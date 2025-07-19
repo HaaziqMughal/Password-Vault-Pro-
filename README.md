@@ -13,3 +13,5 @@ Add, view, and toggle visibility of saved passwords
 Responsive design with dark/light theme toggle
 
 Clean Ul and modern security practices
+
+How to use 👉 To use this website Download these files and open the file named (index1.html) and run with any browser..
